@@ -216,6 +216,11 @@ class FullHomePageDataView(generics.GenericAPIView):
 
 # ========== НОВЫЕ VIEWS ДЛЯ ДЕТАЛЬНЫХ СТРАНИЦ УСЛУГ ==========
 
+@extend_schema(
+    summary="Получить детальную информацию об услуге",
+    description="Возвращает полную детальную информацию об услуге по ID ServiceDetail",
+    tags=["Детальные страницы услуг"]
+)
 # GET - детальная информация об услуге по ID ServiceDetail
 class ServiceDetailView(generics.RetrieveAPIView):
     """Получение детальной информации об услуге"""
@@ -227,6 +232,11 @@ class ServiceDetailView(generics.RetrieveAPIView):
         return ServiceDetailSerializer
 
 
+@extend_schema(
+    summary="Получить детальную информацию по service_id",
+    description="Возвращает детальную информацию об услуге по ID связанной основной услуги Service",
+    tags=["Детальные страницы услуг"]
+)
 # GET - детальная информация об услуге по связанному service_id
 class ServiceDetailByServiceView(generics.RetrieveAPIView):
     """Получение детальной информации об услуге по ID основной услуги"""
@@ -241,6 +251,11 @@ class ServiceDetailByServiceView(generics.RetrieveAPIView):
         return ServiceDetailSerializer
 
 
+@extend_schema(
+    summary="Получить все детальные страницы услуг",
+    description="Возвращает список всех детальных страниц услуг с полной информацией",
+    tags=["Детальные страницы услуг"]
+)
 # GET - список всех детальных страниц услуг
 class ServiceDetailListView(generics.ListAPIView):
     """Получение списка всех детальных страниц услуг"""
@@ -252,6 +267,19 @@ class ServiceDetailListView(generics.ListAPIView):
         return ServiceDetailSerializer
 
 
+@extend_schema(
+    summary="Получить особенности услуги",
+    description="Возвращает список особенностей для указанной услуги",
+    tags=["Детальные страницы услуг"],
+    parameters=[
+        OpenApiParameter(
+            name='service_detail_id',
+            type=OpenApiTypes.INT,
+            location=OpenApiParameter.PATH,
+            description='ID детальной страницы услуги'
+        )
+    ]
+)
 # GET - особенности конкретной услуги
 class ServiceFeatureListView(generics.ListAPIView):
     """Получение особенностей конкретной услуги"""
@@ -266,6 +294,19 @@ class ServiceFeatureListView(generics.ListAPIView):
         return ServiceFeatureSerializer
 
 
+@extend_schema(
+    summary="Получить этапы работы услуги",
+    description="Возвращает список этапов работы для указанной услуги",
+    tags=["Детальные страницы услуг"],
+    parameters=[
+        OpenApiParameter(
+            name='service_detail_id',
+            type=OpenApiTypes.INT,
+            location=OpenApiParameter.PATH,
+            description='ID детальной страницы услуги'
+        )
+    ]
+)
 # GET - этапы работы конкретной услуги
 class ServiceProcessListView(generics.ListAPIView):
     """Получение этапов работы конкретной услуги"""
@@ -280,6 +321,19 @@ class ServiceProcessListView(generics.ListAPIView):
         return ServiceProcessSerializer
 
 
+@extend_schema(
+    summary="Получить преимущества услуги",
+    description="Возвращает список преимуществ для указанной услуги",
+    tags=["Детальные страницы услуг"],
+    parameters=[
+        OpenApiParameter(
+            name='service_detail_id',
+            type=OpenApiTypes.INT,
+            location=OpenApiParameter.PATH,
+            description='ID детальной страницы услуги'
+        )
+    ]
+)
 # GET - преимущества конкретной услуги
 class ServiceBenefitListView(generics.ListAPIView):
     """Получение преимуществ конкретной услуги"""
@@ -294,6 +348,19 @@ class ServiceBenefitListView(generics.ListAPIView):
         return ServiceBenefitSerializer
 
 
+@extend_schema(
+    summary="Получить FAQ услуги",
+    description="Возвращает список часто задаваемых вопросов для указанной услуги",
+    tags=["Детальные страницы услуг"],
+    parameters=[
+        OpenApiParameter(
+            name='service_detail_id',
+            type=OpenApiTypes.INT,
+            location=OpenApiParameter.PATH,
+            description='ID детальной страницы услуги'
+        )
+    ]
+)
 # GET - FAQ конкретной услуги
 class ServiceFAQListView(generics.ListAPIView):
     """Получение FAQ конкретной услуги"""
@@ -308,6 +375,19 @@ class ServiceFAQListView(generics.ListAPIView):
         return ServiceFAQSerializer
 
 
+@extend_schema(
+    summary="Получить кейсы услуги",
+    description="Возвращает список кейсов/примеров работ для указанной услуги",
+    tags=["Детальные страницы услуг"],
+    parameters=[
+        OpenApiParameter(
+            name='service_detail_id',
+            type=OpenApiTypes.INT,
+            location=OpenApiParameter.PATH,
+            description='ID детальной страницы услуги'
+        )
+    ]
+)
 # GET - кейсы конкретной услуги
 class ServiceCaseListView(generics.ListAPIView):
     """Получение кейсов конкретной услуги"""
@@ -324,6 +404,19 @@ class ServiceCaseListView(generics.ListAPIView):
 
 # ========== VIEWSETS ДЛЯ АДМИНКИ ==========
 
+@extend_schema(
+    summary="Управление услугами",
+    description="Полное CRUD управление услугами (только для администраторов)",
+    tags=["Администрирование"],
+    parameters=[
+        OpenApiParameter(
+            name='pk',
+            type=OpenApiTypes.INT,
+            location=OpenApiParameter.PATH,
+            description='ID услуги'
+        )
+    ]
+)
 class ServiceViewSet(viewsets.ModelViewSet):
     """ViewSet для полного управления услугами (админка)"""
     queryset = Service.objects.all()
@@ -335,6 +428,21 @@ class ServiceViewSet(viewsets.ModelViewSet):
             return ServiceSerializer
         return ServiceAdminDetailSerializer
     
+    @extend_schema(
+        summary="Активировать/деактивировать услугу",
+        description="Активировать или деактивировать услугу",
+        tags=["Администрирование"],
+        parameters=[
+            OpenApiParameter(
+                name='pk',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description='ID услуги'
+            )
+        ],
+        request=None,
+        responses={200: {'type': 'object', 'properties': {'status': {'type': 'string'}, 'is_active': {'type': 'boolean'}}}}
+    )
     @action(detail=True, methods=['post'])
     def toggle_active(self, request, pk=None):
         """Активировать/деактивировать услугу"""
@@ -344,6 +452,19 @@ class ServiceViewSet(viewsets.ModelViewSet):
         return Response({'status': 'success', 'is_active': service.is_active})
 
 
+@extend_schema(
+    summary="Управление отзывами",
+    description="Полное CRUD управление отзывами клиентов (только для администраторов)",
+    tags=["Администрирование"],
+    parameters=[
+        OpenApiParameter(
+            name='pk',
+            type=OpenApiTypes.INT,
+            location=OpenApiParameter.PATH,
+            description='ID отзыва'
+        )
+    ]
+)
 class TestimonialViewSet(viewsets.ModelViewSet):
     """ViewSet для полного управления отзывами (админка)"""
     queryset = Testimonial.objects.all()
@@ -355,6 +476,21 @@ class TestimonialViewSet(viewsets.ModelViewSet):
             return TestimonialSerializer
         return TestimonialDetailSerializer
     
+    @extend_schema(
+        summary="Активировать/деактивировать отзыв",
+        description="Активировать или деактивировать отзыв",
+        tags=["Администрирование"],
+        parameters=[
+            OpenApiParameter(
+                name='pk',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description='ID отзыва'
+            )
+        ],
+        request=None,
+        responses={200: {'type': 'object', 'properties': {'status': {'type': 'string'}, 'is_active': {'type': 'boolean'}}}}
+    )
     @action(detail=True, methods=['post'])
     def toggle_active(self, request, pk=None):
         """Активировать/деактивировать отзыв"""
@@ -364,6 +500,19 @@ class TestimonialViewSet(viewsets.ModelViewSet):
         return Response({'status': 'success', 'is_active': testimonial.is_active})
 
 
+@extend_schema(
+    summary="Управление заявками на консультацию",
+    description="Полное CRUD управление заявками на консультацию (только для администраторов)",
+    tags=["Администрирование"],
+    parameters=[
+        OpenApiParameter(
+            name='pk',
+            type=OpenApiTypes.INT,
+            location=OpenApiParameter.PATH,
+            description='ID заявки'
+        )
+    ]
+)
 class ConsultationRequestViewSet(viewsets.ModelViewSet):
     """ViewSet для управления заявками на консультацию (админка)"""
     queryset = ConsultationRequest.objects.all()
@@ -375,6 +524,21 @@ class ConsultationRequestViewSet(viewsets.ModelViewSet):
             return ConsultationRequestSerializer
         return ConsultationRequestDetailSerializer
     
+    @extend_schema(
+        summary="Отметить заявку как обработанную",
+        description="Пометить заявку на консультацию как обработанную",
+        tags=["Администрирование"],
+        parameters=[
+            OpenApiParameter(
+                name='pk',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description='ID заявки'
+            )
+        ],
+        request=None,
+        responses={200: {'type': 'object', 'properties': {'status': {'type': 'string'}, 'is_processed': {'type': 'boolean'}}}}
+    )
     @action(detail=True, methods=['post'])
     def mark_processed(self, request, pk=None):
         """Отметить заявку как обработанную"""
@@ -383,6 +547,21 @@ class ConsultationRequestViewSet(viewsets.ModelViewSet):
         consultation.save()
         return Response({'status': 'success', 'is_processed': True})
     
+    @extend_schema(
+        summary="Отметить заявку как необработанную",
+        description="Пометить заявку на консультацию как необработанную",
+        tags=["Администрирование"],
+        parameters=[
+            OpenApiParameter(
+                name='pk',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description='ID заявки'
+            )
+        ],
+        request=None,
+        responses={200: {'type': 'object', 'properties': {'status': {'type': 'string'}, 'is_processed': {'type': 'boolean'}}}}
+    )
     @action(detail=True, methods=['post'])
     def mark_unprocessed(self, request, pk=None):
         """Отметить заявку как необработанную"""
@@ -392,6 +571,19 @@ class ConsultationRequestViewSet(viewsets.ModelViewSet):
         return Response({'status': 'success', 'is_processed': False})
 
 
+@extend_schema(
+    summary="Управление детальными страницами услуг",
+    description="Полное CRUD управление детальными страницами услуг (только для администраторов)",
+    tags=["Администрирование"],
+    parameters=[
+        OpenApiParameter(
+            name='pk',
+            type=OpenApiTypes.INT,
+            location=OpenApiParameter.PATH,
+            description='ID детальной страницы услуги'
+        )
+    ]
+)
 class ServiceDetailViewSet(viewsets.ModelViewSet):
     """ViewSet для полного управления детальными страницами услуг (админка)"""
     queryset = ServiceDetail.objects.all()
@@ -401,6 +593,21 @@ class ServiceDetailViewSet(viewsets.ModelViewSet):
         from .serializers import ServiceDetailSerializer
         return ServiceDetailSerializer
     
+    @extend_schema(
+        summary="Активировать/деактивировать детальную страницу",
+        description="Активировать или деактивировать детальную страницу",
+        tags=["Администрирование"],
+        parameters=[
+            OpenApiParameter(
+                name='pk',
+                type=OpenApiTypes.INT,
+                location=OpenApiParameter.PATH,
+                description='ID детальной страницы услуги'
+            )
+        ],
+        request=None,
+        responses={200: {'type': 'object', 'properties': {'status': {'type': 'string'}, 'is_active': {'type': 'boolean'}}}}
+    )
     @action(detail=True, methods=['post'])
     def toggle_active(self, request, pk=None):
         """Активировать/деактивировать детальную страницу"""
