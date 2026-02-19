@@ -1,7 +1,9 @@
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAdminUser
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
+from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
+from drf_spectacular.types import OpenApiTypes
 from django.db import models
 from django.shortcuts import get_object_or_404
 from .models import (
@@ -21,14 +23,24 @@ from .telegram_service import TelegramService
 
 # ========== СУЩЕСТВУЮЩИЕ VIEWS ==========
 
-# GET - список услуг
+@extend_schema(
+    summary="Получить список услуг",
+    description="Возвращает список всех активных услуг/проектов, отсортированных по порядку и названию",
+    tags=["Услуги"]
+)
 class ServiceListView(generics.ListAPIView):
     """Получение списка услуг/проектов"""
     queryset = Service.objects.filter(is_active=True).order_by('order')
     serializer_class = ServiceSerializer
     permission_classes = [AllowAny]
 
-# POST - создание заявки (подписка)
+@extend_schema(
+    summary="Создать заявку на обратную связь",
+    description="Создает новую заявку на обратную связь и отправляет уведомление в Telegram",
+    tags=["Заявки"],
+    request=ContactRequestSerializer,
+    responses={201: ContactRequestSerializer}
+)
 class ContactCreateView(generics.CreateAPIView):
     """Создание заявки на обратную связь (Sign up to connect with us)"""
     queryset = ContactRequest.objects.all()
@@ -57,7 +69,11 @@ class ContactCreateView(generics.CreateAPIView):
 
 # ========== НОВЫЕ VIEWS (из второго скриншота) ==========
 
-# GET - список технологий
+@extend_schema(
+    summary="Получить список технологий",
+    description="Возвращает список всех активных технологий, используемых компанией",
+    tags=["Технологии"]
+)
 class TechnologyListView(generics.ListAPIView):
     """Получение списка технологий (секция 'Мы используем')"""
     queryset = Technology.objects.filter(is_active=True).order_by('order')
@@ -65,7 +81,11 @@ class TechnologyListView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
 
-# GET - список отзывов
+@extend_schema(
+    summary="Получить список отзывов",
+    description="Возвращает список всех активных отзывов клиентов",
+    tags=["Отзывы"]
+)
 class TestimonialListView(generics.ListAPIView):
     """Получение списка отзывов клиентов"""
     queryset = Testimonial.objects.filter(is_active=True).order_by('order')
@@ -73,7 +93,11 @@ class TestimonialListView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
 
-# GET - список проектов (для оглавления)
+@extend_schema(
+    summary="Получить список проектов",
+    description="Возвращает список всех активных проектов для оглавления",
+    tags=["Проекты"]
+)
 class ProjectListView(generics.ListAPIView):
     """Получение списка проектов"""
     queryset = Project.objects.filter(is_active=True).order_by('order')
@@ -81,7 +105,13 @@ class ProjectListView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
 
-# POST - создание заявки на консультацию
+@extend_schema(
+    summary="Создать заявку на консультацию",
+    description="Создает новую заявку на бесплатную консультацию и отправляет уведомление в Telegram",
+    tags=["Заявки"],
+    request=ConsultationRequestSerializer,
+    responses={201: ConsultationRequestSerializer}
+)
 class ConsultationCreateView(generics.CreateAPIView):
     """Создание заявки на бесплатную консультацию"""
     queryset = ConsultationRequest.objects.all()
@@ -108,7 +138,11 @@ class ConsultationCreateView(generics.CreateAPIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 
-# GET - информация о компании
+@extend_schema(
+    summary="Получить информацию о компании",
+    description="Возвращает контактную информацию компании (телефон, адрес, режим работы)",
+    tags=["Компания"]
+)
 class CompanyInfoView(generics.RetrieveAPIView):
     """Получение контактной информации компании"""
     permission_classes = [AllowAny]
@@ -126,7 +160,11 @@ class CompanyInfoView(generics.RetrieveAPIView):
         return obj
 
 
-# GET - контент страницы
+@extend_schema(
+    summary="Получить контент главной страницы",
+    description="Возвращает контент для главной страницы (заголовки, тексты, изображения)",
+    tags=["Контент"]
+)
 class SiteContentView(generics.RetrieveAPIView):
     """Получение контента главной страницы"""
     permission_classes = [AllowAny]
@@ -141,7 +179,11 @@ class SiteContentView(generics.RetrieveAPIView):
 
 # ========== КОМБИНИРОВАННЫЕ VIEWS ==========
 
-# GET - все данные для главной страницы
+@extend_schema(
+    summary="Получить все данные для главной страницы",
+    description="Возвращает все необходимые данные для отображения главной страницы: услуги, технологии, отзывы, проекты, информация о компании и контент страницы",
+    tags=["Главная страница"]
+)
 class FullHomePageDataView(generics.GenericAPIView):
     """Получение всех данных для главной страницы"""
     permission_classes = [AllowAny]
@@ -367,6 +409,31 @@ class ServiceDetailViewSet(viewsets.ModelViewSet):
         service_detail.save()
         return Response({'status': 'success', 'is_active': service_detail.is_active})
 
+@extend_schema(
+    summary="Получить список вакансий",
+    description="Возвращает список всех активных вакансий с возможностью фильтрации по категории, уровню и типу занятости",
+    tags=["Вакансии"],
+    parameters=[
+        OpenApiParameter(
+            name='category',
+            type=OpenApiTypes.STR,
+            description='Фильтрация по категории (Frontend, Backend, Fullstack)',
+            required=False
+        ),
+        OpenApiParameter(
+            name='level',
+            type=OpenApiTypes.STR,
+            description='Фильтрация по уровню (junior, middle, senior)',
+            required=False
+        ),
+        OpenApiParameter(
+            name='employment_type',
+            type=OpenApiTypes.STR,
+            description='Фильтрация по типу занятости (Full-time, Part-time, remote, hybird, internship)',
+            required=False
+        )
+    ]
+)
 class VacancyListView(generics.ListAPIView):
     """Список всех активных вакансий"""
     queryset = Vacancy.objects.filter(is_active=True)
@@ -393,6 +460,11 @@ class VacancyListView(generics.ListAPIView):
         
         return queryset
 
+@extend_schema(
+    summary="Получить детальную информацию о вакансии",
+    description="Возвращает полную информацию о вакансии по ID, включая описание и требования. Увеличивает счетчик просмотров.",
+    tags=["Вакансии"]
+)
 class VacancyDetailView(generics.RetrieveAPIView):
     """Детальная страница вакансии"""
     queryset = Vacancy.objects.filter(is_active=True)
@@ -408,6 +480,13 @@ class VacancyDetailView(generics.RetrieveAPIView):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
+@extend_schema(
+    summary="Создать отклик на вакансию",
+    description="Создает новый отклик на указанную вакансию",
+    tags=["Вакансии"],
+    request=VacancyApplicationSerializer,
+    responses={201: VacancyApplicationSerializer}
+)
 class VacancyApplicationCreateView(generics.CreateAPIView):
     """Создание отклика на вакансию"""
     serializer_class = VacancyApplicationSerializer

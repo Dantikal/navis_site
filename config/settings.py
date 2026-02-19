@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'ckeditor_uploader',
     'whitenoise',  # added whitenoise app
+    'drf_spectacular',  # Swagger/OpenAPI documentation
 ]
 
 MIDDLEWARE = [
@@ -158,6 +159,28 @@ CKEDITOR_CONFIGS = {
         'width': '100%',
         'extraPlugins': 'codesnippet',
     },
+}
+
+# REST Framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# DRF Spectacular settings
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Navis Site API',
+    'DESCRIPTION': 'API документация для сайта Navis - услуги, проекты, вакансии',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': '/api/',
 }
 
 # GET http://127.0.0.1:8000/api/services/ - список услуг
