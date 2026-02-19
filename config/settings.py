@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'unfold.contrib.filters',  # Unfold filters
     'unfold.contrib.forms',  # Unfold forms
     'unfold.contrib.inlines',  # Unfold inlines
-    'unfold.contrib.tabs',  # Unfold tabs
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

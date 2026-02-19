@@ -1,8 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin
-from unfold.contrib.filters import AdminFilters
-from unfold.contrib.forms import UserCreationForm, UserChangeForm
 from .models import (
     Service, Technology, Testimonial, Project,
     ContactRequest, ConsultationRequest, CompanyInfo, SiteContent,
