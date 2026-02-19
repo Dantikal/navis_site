@@ -36,6 +36,11 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,navis-site.
 # Application definition
 
 INSTALLED_APPS = [
+    'unfold',  # Django Unfold admin theme
+    'unfold.contrib.filters',  # Unfold filters
+    'unfold.contrib.forms',  # Unfold forms
+    'unfold.contrib.inlines',  # Unfold inlines
+    'unfold.contrib.tabs',  # Unfold tabs
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -182,6 +187,109 @@ SPECTACULAR_SETTINGS = {
         'deepLinking': True,
         'persistAuthorization': True,
     },
+}
+
+# Django Unfold settings
+UNFOLD = {
+    "SITE_TITLE": "Navis Admin",
+    "SITE_HEADER": "Navis Administration",
+    "SITE_INDEX_TITLE": "Welcome to Navis Admin Panel",
+    "SITE_URL": "/",
+    "HELP_TEXT": "Documentation available at: <a href='/api/docs/' target='_blank'>API Documentation</a>",
+    "SHOW_DOCUMENTATION": True,
+    "SHOW_SEARCH": True,
+    "SHOW_HISTORY": True,
+    "SIDEBAR": {
+        "search": True,
+        "history": True,
+        "documentation": True,
+    },
+    "THEME": "light",
+    "DASHBOARD": "unfold.contrib.dashboard",
+    "NAVIGATION": [
+        {
+            "title": "Content Management",
+            "items": [
+                {
+                    "title": "Services",
+                    "icon": "folder",
+                    "link": "admin:main_service_changelist",
+                },
+                {
+                    "title": "Technologies", 
+                    "icon": "cpu",
+                    "link": "admin:main_technology_changelist",
+                },
+                {
+                    "title": "Testimonials",
+                    "icon": "message-square",
+                    "link": "admin:main_testimonial_changelist",
+                },
+                {
+                    "title": "Projects",
+                    "icon": "briefcase",
+                    "link": "admin:main_project_changelist",
+                },
+                {
+                    "title": "Vacancies",
+                    "icon": "users",
+                    "link": "admin:main_vacancy_changelist",
+                },
+            ],
+        },
+        {
+            "title": "Requests & Applications",
+            "items": [
+                {
+                    "title": "Contact Requests",
+                    "icon": "mail",
+                    "link": "admin:main_contactrequest_changelist",
+                },
+                {
+                    "title": "Consultation Requests",
+                    "icon": "phone",
+                    "link": "admin:main_consultationrequest_changelist",
+                },
+                {
+                    "title": "Vacancy Applications",
+                    "icon": "file-text",
+                    "link": "admin:main_vacancyapplication_changelist",
+                },
+            ],
+        },
+        {
+            "title": "Site Configuration",
+            "items": [
+                {
+                    "title": "Company Info",
+                    "icon": "building",
+                    "link": "admin:main_companyinfo_changelist",
+                },
+                {
+                    "title": "Site Content",
+                    "icon": "layout",
+                    "link": "admin:main_sitecontent_changelist",
+                },
+            ],
+        },
+        {
+            "title": "API Documentation",
+            "items": [
+                {
+                    "title": "Swagger UI",
+                    "icon": "book-open",
+                    "link": "/api/docs/",
+                    "external": True,
+                },
+                {
+                    "title": "ReDoc",
+                    "icon": "file-text",
+                    "link": "/api/redoc/",
+                    "external": True,
+                },
+            ],
+        },
+    ],
 }
 
 # GET http://127.0.0.1:8000/api/services/ - список услуг

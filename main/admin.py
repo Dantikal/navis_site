@@ -1,5 +1,8 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from unfold.admin import ModelAdmin
+from unfold.contrib.filters import AdminFilters
+from unfold.contrib.forms import UserCreationForm, UserChangeForm
 from .models import (
     Service, Technology, Testimonial, Project,
     ContactRequest, ConsultationRequest, CompanyInfo, SiteContent,
@@ -83,7 +86,7 @@ class ServiceCaseInline(admin.TabularInline):
 
 
 @admin.register(ServiceDetail)
-class ServiceDetailAdmin(admin.ModelAdmin):
+class ServiceDetailAdmin(ModelAdmin):
     """Админка для детальной страницы услуги"""
     list_display = [
         'title', 'service_link', 'is_active', 
